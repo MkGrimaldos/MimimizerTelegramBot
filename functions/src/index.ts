@@ -15,7 +15,7 @@ app.post('/', async (req, res) => {
     the message receive will be in this
     https://core.telegram.org/bots/api#update
   */
-  const command = "/mimimize "
+  const command = "/mimimize"
   const isValidTelegramMessage = req.body
                           && req.body.message
                           && req.body.message.chat
@@ -25,11 +25,18 @@ app.post('/', async (req, res) => {
 
   if (isValidTelegramMessage) {
     const chat_id = req.body.message.chat.id
+    var returnMessage = ""
+
+    if (req.body.message.reply_to_message && req.body.message.reply_to_message.text) {
+      returnMessage = req.body.message.reply_to_message.text
+    } else {
+      returnMessage = req.body.message.text.substring(command.length).trim()
+    }
 
     return res.status(200).send({
       method: 'sendMessage',
       chat_id,
-      text: req.body.message.text.substring(command.length).replace(/[aáàäâãeéèëêoóòöôõuúùüû]/g, "i").replace(/[AÁÀÄÂÃEÉÈËÊOÓÒÖÔÕUÚÙÜÛ]/g, "I")
+      text: returnMessage.replace(/[aáàäâãeéèëêoóòöôõuúùüû]/g, "i").replace(/[AÁÀÄÂÃEÉÈËÊOÓÒÖÔÕUÚÙÜÛ]/g, "I")
     })
   }
 
